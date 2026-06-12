@@ -87,6 +87,8 @@ If the outfit string is empty or blank, the tool does NOT crash. It returns a pl
 <!-- Describe the logic your planning loop uses. What does it look at? What conditions change its behavior? How does it know when it's done? -->
 The agent runs the three tools in a fixed order, and each step depends on the one before it. First it parses the query and calls search_listings. If the search returns nothing, it stops and reports an error — it does not move on. If the search found items, it picks the top one and calls suggest_outfit. Once it has an outfit string, it calls create_fit_card. The agent is done when the fit card is created, or when any step sets an error.
 
+**Query parsing choice:** the agent parses the query with regex and string matching, not an LLM call. It pulls out `max_price` (e.g. "under $30"), `size` (e.g. "size M" or a standalone size token like "XS"), and uses the remaining words — minus filler words like "looking for a" — as the search `description`. This keeps parsing fast, free, and deterministic, and avoids a second model call before the search even runs.
+
 ---
 
 ## State Management
